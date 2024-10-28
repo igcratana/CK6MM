@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Numbers Display with Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f9f9f9;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            max-width: 500px;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .column {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 0;
+        }
+        .number-group-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        .number-group {
+            font-size: 12px;
+            padding: 6px;
+            background-color: #e6e6e6;
+            border: 1px solid #ccc;
+            text-align: center;
+            border-radius: 3px;
+            width: 18%;
+        }
+        button {
+            padding: 8px 16px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .result-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 500px;
+            margin-top: 20px;
+            background-color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .result-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .result-group-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 4px;
+        }
+        .result-group {
+            font-size: 12px;
+            padding: 6px;
+            background-color: #d9edf7;
+            border: 1px solid #bce8f1;
+            text-align: center;
+            border-radius: 3px;
+            width: 18%;
+            color: #31708f;
+        }
+        .timer {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 20px 0;
+            color: #333;
+        }
+        .controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .stop {
+            background-color: #f44336;
+        }
+        .reset {
+            background-color: #ffa500;
+        }
+        /* Responsive Design for screens smaller than 600px */
+@media (max-width: 600px) {
+    .container {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        gap: 20px;
+    }
+    .column {
+        flex: 1; /* Each column takes up equal space */
+        display: flex;
+        flex-direction: column;
+    }
+    .number-group {
+        font-size: 10px;
+        padding: 5px;
+        width: 18%; /* Adjust width for a better fit */
+    }
+}
+    </style>
+</head>
+<body>
+    <button onclick="generateRandomNumbers()">ចុចដើម្បីផ្លាស់ប្ដូរលេខសម្រាប់ដក</button>
+    
+    <div class="controls">
+        <input type="number" id="stopTime" placeholder="សូមបញ្ចូលលេខ (គិតជានាទី)" min="1">
+        <button onclick="startTimer()">ចាប់ផ្ដើម</button>
+        <button class="stop" onclick="stopTimer()">បញ្ឈប់ពេលវេលា</button>
+        <button class="reset" onclick="resetTimer()">សារឡើងវិញ</button>
+    </div>
+ 
+    <div class="timer" id="timerDisplay">00:00:00</div>
+
+    <div class="container">
+        <div id="left-column" class="column">
+            <!-- Left Column -->
+        </div>
+        <div id="right-column" class="column">
+            <!-- Right Column -->
+        </div>
+    </div>
+
+    <div id="result" class="result-container">
+        <h3 class="result-title">លទ្ធផលនៃការដក</h3>
+        <!-- Result Display -->
+    </div>
+
+    <script>
+        let timerInterval;
+        let seconds = 0;
+        let stopTime = 0;
+
+function startTimer() {
+    clearInterval(timerInterval);
+    const inputTime = document.getElementById("stopTime").value;
+    stopTime = inputTime ? parseInt(inputTime) * 60 : 0; // បំលែងជាវិនាទី (1 នាទី = 60 វិនាទី)
+
+    if (stopTime <= 0) {
+        alert("Please enter a positive number for the timer.");
+        return;
+    }
+
+    timerInterval = setInterval(() => {
+        seconds++;
+        displayTime();
+        if (stopTime && seconds >= stopTime) {
+            stopTimer();
+        }
+    }, 1000);
+}
+        function stopTimer() {
+            clearInterval(timerInterval);
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            seconds = 0;
+            document.getElementById("timerDisplay").textContent = "00:00:00";
+            document.getElementById("stopTime").value = "";
+        }
+
+        function displayTime() {
+            const hrs = String(Math.floor(seconds / 3600)).padStart(2, '0');
+            const mins = String(Math.floor((seconds % 3600) / 60)).padStart(2, '0');
+            const secs = String(seconds % 60).padStart(2, '0');
+            document.getElementById("timerDisplay").textContent = `${hrs}:${mins}:${secs}`;
+        }
+
+        function generateRandomNumbers() {
+            const leftColumn = document.getElementById('left-column');
+            const rightColumn = document.getElementById('right-column');
+            leftColumn.innerHTML = '';
+            rightColumn.innerHTML = '';
+
+            const leftNumbers = [];
+            const rightNumbers = [];
+
+            for (let i = 0; i < 18; i++) {
+                const leftRow = document.createElement('div');
+                leftRow.className = 'number-group-row';
+                const rightRow = document.createElement('div');
+                rightRow.className = 'number-group-row';
+
+                const leftGroup = [];
+                const rightGroup = [];
+
+                for (let j = 0; j < 5; j++) {
+                    let leftNum = '';
+                    let rightNum = '';
+                    for (let k = 0; k < 5; k++) {
+                        leftNum += Math.floor(Math.random() * 10);
+                        rightNum += Math.floor(Math.random() * 10);
+                    }
+
+                    const leftNumberElement = document.createElement('div');
+                    leftNumberElement.className = 'number-group';
+                    leftNumberElement.textContent = leftNum;
+                    leftRow.appendChild(leftNumberElement);
+                    leftGroup.push(leftNum);
+
+                    const rightNumberElement = document.createElement('div');
+                    rightNumberElement.className = 'number-group';
+                    rightNumberElement.textContent = rightNum;
+                    rightRow.appendChild(rightNumberElement);
+                    rightGroup.push(rightNum);
+                }
+
+                leftColumn.appendChild(leftRow);
+                rightColumn.appendChild(rightRow);
+                leftNumbers.push(leftGroup);
+                rightNumbers.push(rightGroup);
+            }
+
+            calculateDifferences(leftNumbers, rightNumbers);
+        }
+
+        function calculateDifferences(leftNumbers, rightNumbers) {
+            const resultContainer = document.getElementById('result');
+            resultContainer.innerHTML = '<h3 class="result-title">លទ្ធផលនៃការដក</h3>';
+
+            for (let i = 0; i < leftNumbers.length; i++) {
+                const resultRow = document.createElement('div');
+                resultRow.className = 'result-group-row';
+
+                const leftGroup = leftNumbers[i];
+                const rightGroup = rightNumbers[i];
+
+                for (let j = 0; j < 5; j++) {
+                    let leftNumStr = leftGroup[j];
+                    let rightNumStr = rightGroup[j];
+                    let difference = '';
+
+                    for (let k = 0; k < 5; k++) {
+                        let leftDigit = parseInt(leftNumStr[k]);
+                        let rightDigit = parseInt(rightNumStr[k]);
+
+                        if (leftDigit < rightDigit) {
+                            leftDigit += 10;
+                        }
+
+                        difference += (leftDigit - rightDigit).toString();
+                    }
+
+                    const resultElement = document.createElement('div');
+                    resultElement.className = 'result-group';
+                    resultElement.textContent = difference;
+                    resultRow.appendChild(resultElement);
+                }
+
+                resultContainer.appendChild(resultRow);
+            }
+        }
+
+        generateRandomNumbers();
+    </script>
+</body>
+</html>
